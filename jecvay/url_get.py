@@ -63,6 +63,10 @@ def getOpener(head):
 
 if __name__ == "__main__":
     argv = sys.argv[1:]
+    if len(argv) != 2:
+        print "Usage:"
+        print "     python script.py <username> <password>"
+        sys.exit()
     url = "http://www.zhihu.com"
     opener, cookie = getOpener(headers)
     try:
