@@ -12,6 +12,7 @@ class BDTB:
     def __init__(self, baseUrl, seeLZ):
         self.baseUrl = baseUrl
         self.seeLZ = '?see_lz=' + str(seeLZ)
+        self.tool = Tool()
 
     def getPage(self, pageNum):
         try:
@@ -48,7 +49,33 @@ class BDTB:
         pattern = re.compile('<div id="post_content_.*?>(.*?)</div>', re.S)
         items = re.findall(pattern, page)
         for item in items:
-            print item
+            print self.tool.replace(item)
+
+class Tool:
+    #remove img and 7 consecutive spaces
+    removeImg = re.compile('<img.*?>| {7}|')
+    #remove a link
+    removeLink = re.compile('<a.*?>|</a>')
+    #sub tr div p
+    replaceLine = re.compile('<tr>|<div>|</div>|</p>')
+    #sub td
+    replaceTD = re.compile('<td>')
+    #sub <p ...> to \n with 2 spaces
+    replacePara = re.compile('<p.*?>')
+    #sub br with \n
+    replaceBR = re.compile('<br><br>|<br>')
+    #remove other tags
+    removeExtraTag = re.compile('<.*?>')
+
+    def replace(self, x):
+        x = re.sub(self.removeImg, "", x)
+        x = re.sub(self.removeLink, "", x)
+        x = re.sub(self.replaceLine, "\n", x)
+        x = re.sub(self.replaceTD, "\t", x)
+        x = re.sub(self.replacePara, "\n  ", x)
+        x = re.sub(self.replaceBR, "\n", x)
+        x = re.sub(self.removeExtraTag, "", x)
+        return x.strip()
 
 if __name__ == "__main__":
     baseURL = "http://tieba.baidu.com/p/3138733512"
